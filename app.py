@@ -55,14 +55,16 @@ year_slider = dcc.RangeSlider(
     )
 
 
-fact1='The highest Total Cryptocurrency Market Cap was 2.97 Trillion US Dollars'
+fact1='The highest Total Cryptocurrency Market Cap was 2.97 Trillion US Dollars, on November, 2021'
 fact2='Excluding Bitcoin the highest Total Cryptocurrency Market Cap was 1.64 Trillion US Dollars'
 fact3='The lowest Bitcoin Dominance of the Total Cryptocurrency Market Cap was 36%'
+fact4='Ethereum has been the 2nd largest Cryptocurrency since 2018 '
 
 facts=[]
-facts.append(fact1)
 facts.append(fact2)
 facts.append(fact3)
+facts.append(fact4)
+facts.append(fact1)
 
 tree_map = px.treemap(crypto_mktcap, path=['Crypto Name'],values='Market Cap_', hover_data =['%'])
 
@@ -74,7 +76,7 @@ server = app.server
 app.layout = html.Div([
     #1
     html.Div([
-        html.H1(children='CRYPTO DASHBOARD'),
+        html.H1(children='CRYPTO VIS', style={'font-size':'70'}),
         html.Img(src=app.get_asset_url('novaims.png'),
                  style={'position': 'relative', 'width': '4%', 'left': '-10px', 'top': '-75px'}),
     ], className='top_bar'),
@@ -153,7 +155,7 @@ app.layout = html.Div([
                 html.Div([
                     html.Div([
                         html.H4(id='fact_index',style={"text-align": "center",
-                                                       "font-weight": "bold", 'font-size': 30}),
+                                                       "font-weight": "bold", 'font-size': 25}),
                         html.Br(),
                         html.Button('Click', id='button', n_clicks=3)
                     ], className='box_fact')
@@ -216,7 +218,7 @@ app.layout = html.Div([
 )
 
 def update_fact(n_clicks):
-    return facts[int(n_clicks % 3)]
+    return facts[int(n_clicks % (len(facts)))]
 
 
 @app.callback(
