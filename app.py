@@ -2,8 +2,8 @@
 import pandas as pd
 
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 
@@ -11,9 +11,9 @@ import plotly.graph_objs as go
 import plotly.express as px
 
 # Import files
-crypto_owners = pd.read_csv('data\crypto_owners.csv')
-crypto_price = pd.read_csv('data\DF_pp.csv')
-crypto_mktcap = pd.read_csv('data\MKTCAP.csv')
+crypto_owners = pd.read_csv('data/crypto_owners.csv')
+crypto_price = pd.read_csv('data/DF_pp.csv')
+crypto_mktcap = pd.read_csv('data/MKTCAP.csv')
 
 total = float(crypto_mktcap['Market Cap_'].sum())
 
@@ -153,7 +153,7 @@ app.layout = html.Div([
                 html.Div([
                     html.Div([
                         html.H4(id='fact_index',style={"text-align": "center",
-                                                       "font-weight": "bold", 'font-size': 15}),
+                                                       "font-weight": "bold", 'font-size': 30}),
                         html.Br(),
                         html.Button('Click', id='button', n_clicks=3)
                     ], className='box_fact')
@@ -195,7 +195,8 @@ app.layout = html.Div([
                 #2b2a
                 html.Div([
                     html.Br(),
-                    dbc.Table.from_dataframe(topcontinent, bordered=True, className='box_fact')
+                    dbc.Table.from_dataframe(topcontinent, bordered=True, className='box_fact'),
+                        html.Button('Click', id='button2', n_clicks=2)
                 ]),
 
                 #2b2b
@@ -259,19 +260,32 @@ def update_graph(cryptos,year,y_value):
 
 @app.callback(
     Output('mapa_crypto1','figure'),
-    [Input('continents','value')])
+    [Input(component_id='button2', component_property='n_clicks'),
+     Input('continents','value')]
 
-def update_map(x):
+)
+
+def update_map(n_clicks, x):
     df_owners = crypto_owners[crypto_owners['continent'].isin(list(x))]
+
+
+    if n_clicks %2==0:
+        coluna='perc_pop'
+        b1='% of Crypto users by country'
+    else:
+        coluna='crypto_owners'
+        b1='Crypto users by country'
+
+    print(coluna)
 
     crypto_map = dict(type='choropleth',
                        locations = df_owners['country'],
                        locationmode='country names',
                        autocolorscale = True,
-                       z=df_owners['perc_pop'],
+                       z=df_owners[coluna],
                        colorscale = 'inferno',
                        marker_line_color= 'rgba(0,0,0,0)',
-                       colorbar= {'title':'% Crypto users'},
+                       colorbar= {'title':b1},
                        colorbar_lenmode='fraction',
                        colorbar_len=0.8,
                        colorbar_x=1,
@@ -287,7 +301,7 @@ def update_map(x):
                                       showframe=False
                                       ),
                              title=dict(
-                                 text='<b>Percentage of the population that uses crypto</b>',
+                                 text='<b>Crypto users around the world</b>',
                                  x=0.5
                              ),
                              margin=dict(l=0,
